@@ -5,44 +5,53 @@ var cellSize = 20;
 
 // Fonction de gestionnaire d'événement pour les touches enfoncées
 function handleKeyDown(event) {
-    if (event.keyCode == 37) { // Flèche gauche
-      if (piece.x > 0) { // Vérifier que la pièce ne sort pas de la grille à gauche
-        piece.x--;
-      }
-    } else if (event.keyCode == 39) { // Flèche droite
-      if (piece.x + piece.shape.length < grid.width) { // Vérifier que la pièce ne sort pas de la grille à droite
-        piece.x++;
-      }
-    } else if (event.keyCode == 38) { // Flèche haut
-      piece.rotate();
+    switch (event.keyCode) {
+      case 37: // Flèche gauche
+        if (piece.x > 0) {
+          piece.x--;
+        }
+        break;
+      case 39: // Flèche droite
+        if (piece.x + piece.shape[0].length < grid.width) {
+          piece.x++;
+        }
+        break;
+      case 38: // Flèche du haut
+        piece.rotate();
+        break;
+      default:
+        break;
     }
   }
 
-
-  // Fonction de gestionnaire d'événement pour les touches relâchées
-  function handleKeyUp(event) {
-    // Ne fait rien pour le moment
-  }
 
   // Ajouter des gestionnaires d'événements pour les touches
   document.addEventListener('keydown', handleKeyDown);
   document.addEventListener('keyup', handleKeyUp);
 
   // Créer un objet de pièce avec une méthode de rotation
-  function Piece() {
+  function Piece(shape,color) {
     this.x = 10;
     this.y = 0;
-    this.shape = [
-      [1, 1, 1],
-      [0, 1, 0],
-      [0, 0, 0]
-    ];
+    this.shape = shape;
+    this.color = color;
   }
+  var pieces = [
+    new Piece([[1, 1], [1, 1]], 'yellow'),
+    new Piece([1, 0],[1, 1], 'pink'),
+    new Piece([0, 1], [1, 1], 'brown'),
+    new Piece([[1, 1, 1, 1]], 'cyan'),
+    new Piece([[1, 1, 1], [0, 0, 1]], 'blue'),
+    new Piece([[1, 1, 1], [0, 1, 0]], 'orange'),
+    new Piece([[1, 1, 0], [0, 1, 1]], 'purple'),
+    new Piece([[0, 1, 1], [1, 1, 0]], 'green'),
+
+  ];
   Piece.prototype.draw = function() {
     for (var row = 0; row < this.shape.length; row++) {
       for (var col = 0; col < this.shape[row].length; col++) {
         if (this.shape[row][col]) {
-          ctx.fillStyle = 'red';
+          ctx.fillStyle = this.color;
           ctx.fillRect((this.x + col) * cellSize, (this.y + row) * cellSize, cellSize, cellSize);
         }
       }
@@ -50,14 +59,16 @@ function handleKeyDown(event) {
   };
   Piece.prototype.rotate = function() {
     var newShape = [];
-    for (var row = 0; row < this.shape.length; row++) {
-      newShape[row] = [];
-      for (var col = 0; col < this.shape[row].length; col++) {
-        newShape[row][col] = this.shape[col][this.shape.length - row - 1];
+    for (var col = 0; col < this.shape[0].length; col++) {
+      var newRow = [];
+      for (var row = this.shape.length - 1; row >= 0; row--) {
+        newRow.push(this.shape[row][col]);
       }
+      newShape.push(newRow);
     }
     this.shape = newShape;
   };
+
 
   // Créer un objet de grille
   function Grid() {
@@ -121,12 +132,14 @@ function handleKeyDown(event) {
         gameOver();
         return;
       }
-      piece = new Piece();
+      var randomIndex = Math.floor(Math.random() * pieces.length);
+      piece = new Piece(pieces[randomIndex].shape, pieces[randomIndex].color);
     }
     removeCompleteLines();
     grid.draw();
     setTimeout(draw, 300);
   }
+
 
   function removeCompleteLines() {
     for (var row = grid.height - 1; row >= 0; row--) {
@@ -169,7 +182,14 @@ function handleKeyDown(event) {
     location.reload();
   }
 
+  function getRandomPiece() {
+    var randomIndex = Math.floor(Math.random() * pieces.length);
+    var piece = pieces[randomIndex];
+    return new Piece(piece.shape, piece.color);
+  }
+
+
   // Initialiser le jeu
-  var piece = new Piece();
+  var piece = getRandomPiece();
   var grid = new Grid();
   draw();
