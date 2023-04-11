@@ -109,7 +109,7 @@ function handleKeyDown(event) {
 
   // Fonction de dessin pour le jeu
 
-function draw() {
+  function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     piece.y++;
     if (piece.y + piece.shape.length <= grid.height && grid.canPlacePiece(piece)) {
@@ -117,12 +117,30 @@ function draw() {
     } else {
       piece.y--;
       grid.placePiece(piece);
+      if (piece.y == 0) {
+        gameOver();
+        return;
+      }
       piece = new Piece();
     }
     grid.draw();
     setTimeout(draw, 300);
   }
 
+  function gameOver() {
+    // Afficher la pop-up
+    var popup = document.getElementById("popup");
+    popup.style.display = "block";
+  }
+
+  function restartGame() {
+    location.reload();
+  }
+
+  // Fonction de fin de jeu, recommencer le jeu
+  function restartGame() {
+    location.reload();
+  }
 
   // Initialiser le jeu
   var piece = new Piece();
