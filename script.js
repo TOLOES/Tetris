@@ -25,6 +25,12 @@ function handleKeyDown(event) {
   }
 
 
+
+  // Fonction de gestionnaire d'événement pour les touches relâchées
+  function handleKeyUp(event) {
+    // Ne fait rien pour le moment
+  }
+
   // Ajouter des gestionnaires d'événements pour les touches
   document.addEventListener('keydown', handleKeyDown);
   document.addEventListener('keyup', handleKeyUp);
@@ -37,15 +43,14 @@ function handleKeyDown(event) {
     this.color = color;
   }
   var pieces = [
-    new Piece([[1, 1], [1, 1]], 'yellow'),
-    new Piece([1, 0],[1, 1], 'pink'),
-    new Piece([0, 1], [1, 1], 'brown'),
-    new Piece([[1, 1, 1, 1]], 'cyan'),
-    new Piece([[1, 1, 1], [0, 0, 1]], 'blue'),
-    new Piece([[1, 1, 1], [0, 1, 0]], 'orange'),
-    new Piece([[1, 1, 0], [0, 1, 1]], 'purple'),
-    new Piece([[0, 1, 1], [1, 1, 0]], 'green'),
-
+    { shape: [[1, 1], [1, 1]], color: 'yellow' },
+    { shape: [[1, 0],[1, 1]], color: 'pink' },
+    { shape: [[0, 1], [1, 1]], color: 'brown' },
+    { shape: [[1, 1, 1, 1]], color: 'cyan' },
+    { shape: [[1, 1, 1], [0, 0, 1]], color: 'blue' },
+    { shape: [[1, 1, 1], [0, 1, 0]], color: 'orange' },
+    { shape: [[1, 1, 0], [0, 1, 1]], color: 'purple' },
+    { shape: [[0, 1, 1], [1, 1, 0]], color: 'green' },
   ];
   Piece.prototype.draw = function() {
     for (var row = 0; row < this.shape.length; row++) {
