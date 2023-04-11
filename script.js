@@ -123,9 +123,36 @@ function handleKeyDown(event) {
       }
       piece = new Piece();
     }
+    removeCompleteLines();
     grid.draw();
     setTimeout(draw, 300);
   }
+
+  function removeCompleteLines() {
+    for (var row = grid.height - 1; row >= 0; row--) {
+      var isComplete = true;
+      for (var col = 0; col < grid.width; col++) {
+        if (grid.cells[row][col] == 0) {
+          isComplete = false;
+          break;
+        }
+      }
+      if (isComplete) {
+        // Supprimer la ligne complète
+        for (var r = row; r > 0; r--) {
+          for (var c = 0; c < grid.width; c++) {
+            grid.cells[r][c] = grid.cells[r - 1][c];
+          }
+        }
+        // Ajouter une nouvelle ligne vide en haut de la grille
+        for (var c = 0; c < grid.width; c++) {
+          grid.cells[0][c] = 0;
+        }
+        row++; // Recomencer la vérification pour la ligne suivante
+      }
+    }
+  }
+
 
   function gameOver() {
     // Afficher la pop-up
