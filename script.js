@@ -41,6 +41,7 @@ function handleKeyDown(event) {
     this.y = 0;
     this.shape = shape;
     this.color = color;
+    this.originalColor = color; // Ajouter une propriété pour enregistrer la couleur d'origine
   }
   var pieces = [
     { shape: [[1, 1], [1, 1]], color: 'yellow' },
@@ -91,12 +92,13 @@ function handleKeyDown(event) {
     for (var row = 0; row < this.cells.length; row++) {
       for (var col = 0; col < this.cells[row].length; col++) {
         if (this.cells[row][col]) {
-          ctx.fillStyle = 'blue';
+          ctx.fillStyle = this.cells[row][col]; // Utiliser la couleur enregistrée dans la grille
           ctx.fillRect(col * cellSize, row * cellSize, cellSize, cellSize);
         }
       }
     }
   };
+
   Grid.prototype.canPlacePiece = function(piece) {
     for (var row = 0; row < piece.shape.length; row++) {
       for (var col = 0; col < piece.shape[row].length; col++) {
@@ -117,11 +119,12 @@ function handleKeyDown(event) {
         if (piece.shape[row][col]) {
           var x = piece.x + col;
           var y = piece.y + row;
-          this.cells[y][x] = 1;
+          this.cells[y][x] = piece.originalColor; // Enregistrer la couleur d'origine de la pièce dans la grille
         }
       }
     }
   };
+
 
   // Fonction de dessin pour le jeu
 
@@ -142,7 +145,7 @@ function handleKeyDown(event) {
     }
     removeCompleteLines();
     grid.draw();
-    setTimeout(draw, 300);
+    setTimeout(draw, 260);
   }
 
 
