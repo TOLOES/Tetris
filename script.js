@@ -1,7 +1,11 @@
-// Créer un canevas
+// Crée un canevas
 var canvas = document.getElementById('canvas');
 var ctx = canvas.getContext('2d');
 var cellSize = 20;
+
+var previewCanvas = document.getElementById('previsualisation');
+var previewCtx = previsualisation.getContext('2d');
+
 
 // Fonction de gestionnaire d'événement pour les touches enfoncées
 function handleKeyDown(event) {
@@ -24,24 +28,34 @@ function handleKeyDown(event) {
     }
   }
 
-
+  Piece.prototype.drawPreview = function() {
+    previewCtx.clearRect(0, 0, previewCanvas.width, previewCanvas.height);
+    for (var row = 0; row < this.shape.length; row++) {
+      for (var col = 0; col < this.shape[row].length; col++) {
+        if (this.shape[row][col]) {
+          previewCtx.fillStyle = this.color;
+          previewCtx.fillRect(col * cellSize, row * cellSize, cellSize, cellSize);
+        }
+      }
+    }
+  };
 
   // Fonction de gestionnaire d'événement pour les touches relâchées
   function handleKeyUp(event) {
-    // Ne fait rien pour le moment
+    // Ne fait rien pour le moment mais essentiel au fonctionnement de l'application
   }
 
-  // Ajouter des gestionnaires d'événements pour les touches
+  // Ajoute des gestionnaires d'événements pour les touches
   document.addEventListener('keydown', handleKeyDown);
   document.addEventListener('keyup', handleKeyUp);
 
-  // Créer un objet de pièce avec une méthode de rotation
+  // Crée un objet de pièce avec une méthode de rotation
   function Piece(shape,color) {
     this.x = 10;
     this.y = 0;
     this.shape = shape;
     this.color = color;
-    this.originalColor = color; // Ajouter une propriété pour enregistrer la couleur d'origine
+    this.originalColor = color; // Ajout d'une propriété pour enregistrer la couleur d'origine
   }
   var pieces = [
     { shape: [[1, 1], [1, 1]], color: 'yellow' },
@@ -74,6 +88,22 @@ function handleKeyDown(event) {
     }
     this.shape = newShape;
   };
+
+  Piece.prototype.drawPreview = function() {
+    previewCtx.clearRect(0, 0, previsualisation.width, previsualisation.height);
+    const offsetX = (previsualisation.width - this.shape[0].length * cellSize) / 2;
+    const offsetY = (previsualisation.height - this.shape.length * cellSize) / 2;
+
+    for (var row = 0; row < this.shape.length; row++) {
+      for (var col = 0; col < this.shape[row].length; col++) {
+        if (this.shape[row][col]) {
+          previewCtx.fillStyle = this.color;
+          previewCtx.fillRect(offsetX + col * cellSize, offsetY + row * cellSize, cellSize, cellSize);
+        }
+      }
+    }
+  };
+
 
 
   // Créer un objet de grille
@@ -119,7 +149,7 @@ function handleKeyDown(event) {
         if (piece.shape[row][col]) {
           var x = piece.x + col;
           var y = piece.y + row;
-          this.cells[y][x] = piece.originalColor; // Enregistrer la couleur d'origine de la pièce dans la grille
+          this.cells[y][x] = piece.originalColor; // Enregistre la couleur d'origine de la pièce dans la grille
         }
       }
     }
@@ -140,8 +170,10 @@ function handleKeyDown(event) {
         gameOver();
         return;
       }
-      var randomIndex = Math.floor(Math.random() * pieces.length);
-      piece = new Piece(pieces[randomIndex].shape, pieces[randomIndex].color);
+      piece = nextPiece;
+    nextPiece = getRandomPiece();
+    nextPiece.drawPreview();
+
     }
     removeCompleteLines();
     grid.draw();
@@ -159,24 +191,24 @@ function handleKeyDown(event) {
         }
       }
       if (isComplete) {
-        // Supprimer la ligne complète
+        // Supprime la ligne complète
         for (var r = row; r > 0; r--) {
           for (var c = 0; c < grid.width; c++) {
             grid.cells[r][c] = grid.cells[r - 1][c];
           }
         }
-        // Ajouter une nouvelle ligne vide en haut de la grille
+        // Ajoute une nouvelle ligne vide en haut de la grille
         for (var c = 0; c < grid.width; c++) {
           grid.cells[0][c] = 0;
         }
-        row++; // Recomencer la vérification pour la ligne suivante
+        row++; // Recommence la vérification pour la ligne suivante
       }
     }
   }
 
 
   function gameOver() {
-    // Afficher la pop-up
+    // Affiche la pop-up
     var popup = document.getElementById("popup");
     popup.style.display = "block";
   }
@@ -190,14 +222,17 @@ function handleKeyDown(event) {
     location.reload();
   }
 
+  var nextPiece = getRandomPiece();
+  nextPiece.drawPreview();
+
   function getRandomPiece() {
     var randomIndex = Math.floor(Math.random() * pieces.length);
     var piece = pieces[randomIndex];
     return new Piece(piece.shape, piece.color);
+
   }
 
-
-  // Initialiser le jeu
+  // Initialise le jeu
   var piece = getRandomPiece();
   var grid = new Grid();
   draw();
