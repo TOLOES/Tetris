@@ -6,6 +6,9 @@ var cellSize = 20;
 var previewCanvas = document.getElementById('previsualisation');
 var previewCtx = previsualisation.getContext('2d');
 
+var score = 0;
+
+
 
 // Fonction de gestionnaire d'événement pour les touches enfoncées
 function handleKeyDown(event) {
@@ -182,6 +185,7 @@ function handleKeyDown(event) {
 
 
   function removeCompleteLines() {
+    var linesCompleted = 0;
     for (var row = grid.height - 1; row >= 0; row--) {
       var isComplete = true;
       for (var col = 0; col < grid.width; col++) {
@@ -202,8 +206,36 @@ function handleKeyDown(event) {
           grid.cells[0][c] = 0;
         }
         row++; // Recommence la vérification pour la ligne suivante
+
+        // Augmente le compteur de lignes complétées
+        linesCompleted++;
       }
     }
+        // Met à jour le score en fonction du nombre de lignes complétées
+    switch (linesCompleted) {
+      case 1:
+        score += 40;
+        break;
+      case 2:
+        score += 100;
+        break;
+      case 3:
+        score += 300;
+        break;
+      case 4:
+        score += 1200;
+        break;
+      default:
+        break;
+    }
+    // Met à jour l'affichage du score
+    if (linesCompleted > 0) {
+      updateScoreDisplay();
+    }
+  }
+
+  function updateScoreDisplay() {
+    document.getElementById('score').innerText = "Score: " + score;
   }
 
 
