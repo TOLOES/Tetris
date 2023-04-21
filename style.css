@@ -34,3 +34,14 @@ body{
       border-radius: 5px;
       text-align: center;
     }
+
+    #score{
+      position: absolute;
+      top: 50%;
+      left: 81%;
+      transform: translate(-50%, -50%);
+      background-color: white;
+      padding: 20px;
+      border-radius: 5px;
+      text-align: center;
+    }
