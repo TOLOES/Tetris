@@ -35,7 +35,29 @@ function handleKeyDown(event) {
     }
   }
 
-  Piece.prototype.drawPreview = function() {
+
+  // Fonction de gestionnaire d'événement pour les touches relâchées
+  function handleKeyUp(event) {
+    // Ne fait rien pour le moment mais essentiel au fonctionnement de l'application
+  }
+
+
+  // Ajoute des gestionnaires d'événements pour les touches
+  document.addEventListener('keydown', handleKeyDown);
+  document.addEventListener('keyup', handleKeyUp);
+
+
+
+  // Crée un objet de pièce avec une méthode de rotation
+  class Piece {
+  constructor(shape, color) {
+    this.x = 10;
+    this.y = 0;
+    this.shape = shape;
+    this.color = color;
+    this.originalColor = color; // Ajout d'une propriété pour enregistrer la couleur d'origine
+  }
+  drawPreview() {
     previewCtx.clearRect(0, 0, previewCanvas.width, previewCanvas.height);
     for (var row = 0; row < this.shape.length; row++) {
       for (var col = 0; col < this.shape[row].length; col++) {
@@ -45,25 +67,29 @@ function handleKeyDown(event) {
         }
       }
     }
-  };
-
-  // Fonction de gestionnaire d'événement pour les touches relâchées
-  function handleKeyUp(event) {
-    // Ne fait rien pour le moment mais essentiel au fonctionnement de l'application
   }
-
-  // Ajoute des gestionnaires d'événements pour les touches
-  document.addEventListener('keydown', handleKeyDown);
-  document.addEventListener('keyup', handleKeyUp);
-
-  // Crée un objet de pièce avec une méthode de rotation
-  function Piece(shape,color) {
-    this.x = 10;
-    this.y = 0;
-    this.shape = shape;
-    this.color = color;
-    this.originalColor = color; // Ajout d'une propriété pour enregistrer la couleur d'origine
+  draw() {
+    for (var row = 0; row < this.shape.length; row++) {
+      for (var col = 0; col < this.shape[row].length; col++) {
+        if (this.shape[row][col]) {
+          ctx.fillStyle = this.color;
+          ctx.fillRect((this.x + col) * cellSize, (this.y + row) * cellSize, cellSize, cellSize);
+        }
+      }
+    }
   }
+  rotate() {
+    var newShape = [];
+    for (var col = 0; col < this.shape[0].length; col++) {
+      var newRow = [];
+      for (var row = this.shape.length - 1; row >= 0; row--) {
+        newRow.push(this.shape[row][col]);
+      }
+      newShape.push(newRow);
+    }
+    this.shape = newShape;
+  }
+}
   var pieces = [
     { shape: [[1, 1], [1, 1]], color: 'yellow' },
     { shape: [[1, 0],[1, 1]], color: 'pink' },
@@ -75,27 +101,6 @@ function handleKeyDown(event) {
     { shape: [[1, 1, 0], [0, 1, 1]], color: 'red' },
     { shape: [[0, 1, 1], [1, 1, 0]], color: 'green' },
   ];
-  Piece.prototype.draw = function() {
-    for (var row = 0; row < this.shape.length; row++) {
-      for (var col = 0; col < this.shape[row].length; col++) {
-        if (this.shape[row][col]) {
-          ctx.fillStyle = this.color;
-          ctx.fillRect((this.x + col) * cellSize, (this.y + row) * cellSize, cellSize, cellSize);
-        }
-      }
-    }
-  };
-  Piece.prototype.rotate = function() {
-    var newShape = [];
-    for (var col = 0; col < this.shape[0].length; col++) {
-      var newRow = [];
-      for (var row = this.shape.length - 1; row >= 0; row--) {
-        newRow.push(this.shape[row][col]);
-      }
-      newShape.push(newRow);
-    }
-    this.shape = newShape;
-  };
 
   Piece.prototype.drawPreview = function() {
     previewCtx.clearRect(0, 0, previsualisation.width, previsualisation.height);
@@ -115,7 +120,8 @@ function handleKeyDown(event) {
 
 
   // Créer un objet de grille
-  function Grid() {
+  class Grid {
+  constructor() {
     this.width = 21;
     this.height = 30;
     this.cells = [];
@@ -126,7 +132,7 @@ function handleKeyDown(event) {
       }
     }
   }
-  Grid.prototype.draw = function() {
+  draw() {
     for (var row = 0; row < this.cells.length; row++) {
       for (var col = 0; col < this.cells[row].length; col++) {
         if (this.cells[row][col]) {
@@ -135,9 +141,8 @@ function handleKeyDown(event) {
         }
       }
     }
-  };
-
-  Grid.prototype.canPlacePiece = function(piece) {
+  }
+  canPlacePiece(piece) {
     for (var row = 0; row < piece.shape.length; row++) {
       for (var col = 0; col < piece.shape[row].length; col++) {
         if (piece.shape[row][col]) {
@@ -150,8 +155,8 @@ function handleKeyDown(event) {
       }
     }
     return true;
-  };
-  Grid.prototype.placePiece = function(piece) {
+  }
+  placePiece(piece) {
     for (var row = 0; row < piece.shape.length; row++) {
       for (var col = 0; col < piece.shape[row].length; col++) {
         if (piece.shape[row][col]) {
@@ -161,7 +166,9 @@ function handleKeyDown(event) {
         }
       }
     }
-  };
+  }
+}
+
 
 
   // Fonction de dessin pour le jeu
@@ -187,6 +194,9 @@ function handleKeyDown(event) {
     grid.draw();
     setTimeout(draw, speed);
   }
+
+
+
 
   var totalLinesCompleted = 0;
 
@@ -217,7 +227,7 @@ function handleKeyDown(event) {
         linesCompleted++;
       }
     }
-        // Mets à jour le score en fonction du nombre de lignes complétées
+        // Met à jour le score en fonction du nombre de lignes complétées
     switch (linesCompleted) {
       case 1:
         score += 40;
@@ -234,7 +244,6 @@ function handleKeyDown(event) {
       default:
         break;
     }
-
     // Met à jour l'affichage du score
     if (linesCompleted > 0) {
       updateScoreDisplay();
@@ -250,9 +259,16 @@ function handleKeyDown(event) {
     }
   }
 
+
+  // Affiche le score
+
   function updateScoreDisplay() {
     document.getElementById('score').innerText = "Score: " + score;
   }
+
+
+
+  // Augmente le niveau du jeu
 
   function levelUp() {
     level++;
@@ -268,20 +284,8 @@ function handleKeyDown(event) {
     levelDisplay.textContent = "Niveau : " + level;
   }
 
-  function gameOver() {
-    // Affiche la pop-up
-    var popup = document.getElementById("popup");
-    popup.style.display = "block";
-  }
 
-  function restartGame() {
-    location.reload();
-  }
-
-  // Fonction de fin de jeu, recommencer le jeu
-  function restartGame() {
-    location.reload();
-  }
+  // Dessine la pièce suivante
 
   var nextPiece = getRandomPiece();
   nextPiece.drawPreview();
@@ -293,9 +297,22 @@ function handleKeyDown(event) {
 
   }
 
+
+
   // Initialise le jeu
   var piece = getRandomPiece();
   var grid = new Grid();
   var level = 1;
   updateLevelDisplay();
   draw();
+
+  function gameOver() {
+    // Affiche la pop-up
+    var popup = document.getElementById("popup");
+    popup.style.display = "block";
+  }
+
+  // Fonction de fin de jeu, recommencer le jeu
+  function restartGame() {
+    location.reload();
+  }
