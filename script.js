@@ -66,8 +66,9 @@ function handleKeyDown(event) {
     { shape: [[0, 1], [1, 1]], color: 'brown' },
     { shape: [[1, 1, 1, 1]], color: 'cyan' },
     { shape: [[1, 1, 1], [0, 0, 1]], color: 'blue' },
-    { shape: [[1, 1, 1], [0, 1, 0]], color: 'orange' },
-    { shape: [[1, 1, 0], [0, 1, 1]], color: 'purple' },
+    { shape: [[1, 1, 1], [1, 0, 0]], color: 'orange' },
+    { shape: [[1, 1, 1], [0, 1, 0]], color: 'purple' },
+    { shape: [[1, 1, 0], [0, 1, 1]], color: 'red' },
     { shape: [[0, 1, 1], [1, 1, 0]], color: 'green' },
   ];
   Piece.prototype.draw = function() {
