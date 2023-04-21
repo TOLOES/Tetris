@@ -8,6 +8,10 @@ var previewCtx = previsualisation.getContext('2d');
 
 var score = 0;
 
+var level = 1;
+var baseSpeed = 600;
+var speed = baseSpeed;
+
 
 
 // Fonction de gestionnaire d'événement pour les touches enfoncées
@@ -181,9 +185,10 @@ function handleKeyDown(event) {
     }
     removeCompleteLines();
     grid.draw();
-    setTimeout(draw, 260);
+    setTimeout(draw, speed);
   }
 
+  var totalLinesCompleted = 0;
 
   function removeCompleteLines() {
     var linesCompleted = 0;
@@ -212,7 +217,7 @@ function handleKeyDown(event) {
         linesCompleted++;
       }
     }
-        // Met à jour le score en fonction du nombre de lignes complétées
+        // Mets à jour le score en fonction du nombre de lignes complétées
     switch (linesCompleted) {
       case 1:
         score += 40;
@@ -229,9 +234,19 @@ function handleKeyDown(event) {
       default:
         break;
     }
+
     // Met à jour l'affichage du score
     if (linesCompleted > 0) {
       updateScoreDisplay();
+
+       // Augmente le niveau en fonction du nombre de lignes complétées
+      var linesThreshold = 5; // Nombre de lignes à compléter pour passer au niveau suivant
+      totalLinesCompleted += linesCompleted;
+
+      if (totalLinesCompleted >= linesThreshold) {
+        levelUp();
+        totalLinesCompleted -= linesThreshold;
+      }
     }
   }
 
@@ -239,6 +254,19 @@ function handleKeyDown(event) {
     document.getElementById('score').innerText = "Score: " + score;
   }
 
+  function levelUp() {
+    level++;
+    speed -= 50;
+    speed = Math.max(speed, 50);
+
+    // Mets à jour l'affichage du niveau
+    updateLevelDisplay();
+  }
+
+  function updateLevelDisplay() {
+    var levelDisplay = document.getElementById("level-display");
+    levelDisplay.textContent = "Niveau : " + level;
+  }
 
   function gameOver() {
     // Affiche la pop-up
@@ -268,4 +296,6 @@ function handleKeyDown(event) {
   // Initialise le jeu
   var piece = getRandomPiece();
   var grid = new Grid();
+  var level = 1;
+  updateLevelDisplay();
   draw();
