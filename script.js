@@ -13,7 +13,22 @@ var baseSpeed = 600;
 var speed = baseSpeed;
 
 var lastUpdate;
-var isPaused = false;
+var isPaused = true;
+
+
+function startGame() {
+  // Initialise le jeu
+  piece = getRandomPiece();
+  grid = new Grid();
+  level = 1;
+  updateLevelDisplay();
+
+  // Démarre la boucle de mise à jour
+  requestAnimationFrame(update);
+
+  document.getElementById('startButton').style.display = 'none';
+}
+
 
 
 //Mettre en pause la partie
@@ -230,23 +245,23 @@ function handleKeyDown(event) {
   }
 
 
- function update(timestamp) {
-  if (isPaused) {
-    return;
+  function update(timestamp) {
+    if (isPaused) {
+      return;
+    }
+    if (!lastUpdate) {
+      lastUpdate = timestamp;
+    }
+    var progress = timestamp - lastUpdate;
+    if (progress >= speed) {
+      draw();
+      lastUpdate = timestamp;
+    }
+
+    requestAnimationFrame(update); // Ajouté pour que le jeu continue de s'exécuter
   }
 
-  if (!lastUpdate) {
-    lastUpdate = timestamp;
-  }
-  var progress = timestamp - lastUpdate;
 
-  if (progress >= speed) {
-    draw();
-    lastUpdate = timestamp;
-  }
-
-  requestAnimationFrame(update);
-}
 
 
 
@@ -370,4 +385,11 @@ function handleKeyDown(event) {
   // Fonction de fin de jeu, recommencer le jeu
   function restartGame() {
     location.reload();
+
   }
+
+  document.getElementById('startButton').addEventListener('click', function() {
+    startGame();
+    togglePause();
+  });
+
