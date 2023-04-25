@@ -12,11 +12,33 @@ var level = 1;
 var baseSpeed = 600;
 var speed = baseSpeed;
 
+var lastUpdate;
+var isPaused = false;
+
+
+//Mettre en pause la partie
+
+function togglePause() {
+  isPaused = !isPaused;
+  if (!isPaused) {
+    requestAnimationFrame(update);
+  }
+}
+
+document.addEventListener('keydown', function(event) {
+  if (event.keyCode === 80) { // P key
+    togglePause();
+  }
+});
 
 
 // Fonction de gestionnaire d'événement pour les touches enfoncées
 function handleKeyDown(event) {
     switch (event.keyCode) {
+
+      case 32: // Espace
+        hardDrop();
+        break;
       case 37: // Flèche gauche
         if (piece.x > 0) {
           piece.x--;
@@ -33,6 +55,18 @@ function handleKeyDown(event) {
       default:
         break;
     }
+  }
+
+// Fonction pour positionner directement la pièce
+  function hardDrop() {
+    while (piece.y + piece.shape.length <= grid.height && grid.canPlacePiece(piece)) {
+      piece.y++;
+    }
+    piece.y--; // Annule le dernier déplacement vers le bas
+    grid.placePiece(piece);
+    piece = nextPiece;
+    nextPiece = getRandomPiece();
+    nextPiece.drawPreview();
   }
 
 
@@ -192,8 +226,28 @@ function handleKeyDown(event) {
     }
     removeCompleteLines();
     grid.draw();
-    setTimeout(draw, speed);
+    //setTimeout(draw, speed);
   }
+
+
+ function update(timestamp) {
+  if (isPaused) {
+    return;
+  }
+
+  if (!lastUpdate) {
+    lastUpdate = timestamp;
+  }
+  var progress = timestamp - lastUpdate;
+
+  if (progress >= speed) {
+    draw();
+    lastUpdate = timestamp;
+  }
+
+  requestAnimationFrame(update);
+}
+
 
 
 
@@ -304,7 +358,8 @@ function handleKeyDown(event) {
   var grid = new Grid();
   var level = 1;
   updateLevelDisplay();
-  draw();
+  requestAnimationFrame(update);
+
 
   function gameOver() {
     // Affiche la pop-up
