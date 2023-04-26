@@ -70,6 +70,7 @@ body {
 
 .Touche {
   position: absolute;
+  text-align: center;;
   color: white;
   width: 200px;
 }
