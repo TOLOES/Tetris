@@ -141,8 +141,6 @@ function handleKeyDown(event) {
 }
   var pieces = [
     { shape: [[1, 1], [1, 1]], color: 'yellow' },
-    { shape: [[1, 0],[1, 1]], color: 'pink' },
-    { shape: [[0, 1], [1, 1]], color: 'brown' },
     { shape: [[1, 1, 1, 1]], color: 'cyan' },
     { shape: [[1, 1, 1], [0, 0, 1]], color: 'blue' },
     { shape: [[1, 1, 1], [1, 0, 0]], color: 'orange' },
